@@ -50,6 +50,7 @@ SDRAM_HandleTypeDef hsdram1;
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_FMC_Init(void);
 /* USER CODE BEGIN PFP */
@@ -69,7 +70,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+//	MPU_Config();
   /* USER CODE END 1 */
 
   /* Enable the CPU Cache */
@@ -92,8 +93,11 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+  /* Configure the peripherals common clocks */
+  PeriphCommonClock_Config();
 
+  /* USER CODE BEGIN SysInit */
+//  MPU_Config();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -104,6 +108,7 @@ int main(void)
   uint32_t ModeStatus = HAL_SDRAM_GetModeStatus(&hsdram1);
 
   uint32_t Sdramstate = HAL_SDRAM_GetState(&hsdram1);
+
 
 uint16_t write_pattern = 0xA5A5; // Test patterns
       uint16_t read_data;
@@ -163,13 +168,14 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_CSI;
-  RCC_OscInitStruct.CSIState = RCC_CSI_ON;
-  RCC_OscInitStruct.CSICalibrationValue = RCC_CSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSIState = RCC_HSI_DIV1;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_CSI;
-  RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 240;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLM = 5;
+  RCC_OscInitStruct.PLL.PLLN = 192;
   RCC_OscInitStruct.PLL.PLLP = 2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
@@ -200,12 +206,30 @@ void SystemClock_Config(void)
   }
 }
 
+/**
+  * @brief Peripherals Common Clock Configuration
+  * @retval None
+  */
+void PeriphCommonClock_Config(void)
+{
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+
+  /** Initializes the peripherals clock
+  */
+  PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CKPER;
+  PeriphClkInitStruct.CkperClockSelection = RCC_CLKPSOURCE_HSI;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
+
 /* FMC initialization function */
 static void MX_FMC_Init(void)
 {
 
   /* USER CODE BEGIN FMC_Init 0 */
-
+	HAL_StatusTypeDef SDRANstatys ;
   /* USER CODE END FMC_Init 0 */
 
   FMC_SDRAM_TimingTypeDef SdramTiming = {0};
@@ -246,37 +270,49 @@ static void MX_FMC_Init(void)
 
   FMC_SDRAM_CommandTypeDef Command;
 
-  // Step 1: Power-up delay (100 µs)
-  HAL_Delay(1);
-
-  // Step 2: Precharge All
-  Command.CommandMode = FMC_SDRAM_CMD_PALL; // 0x2
-  Command.CommandTarget = FMC_SDRAM_BANK1;
-  Command.AutoRefreshNumber = 1;
+  /* Step 1: Clock enable command */
+  Command.CommandMode            = FMC_SDRAM_CMD_CLK_ENABLE;
+  Command.CommandTarget          = FMC_SDRAM_CMD_TARGET_BANK1;
+  Command.AutoRefreshNumber      = 1;
   Command.ModeRegisterDefinition = 0;
-  if (HAL_SDRAM_SendCommand(&hsdram1, &Command, 0xFFFF) != HAL_OK) {
-      Error_Handler();
-  }
+  SDRANstatys = HAL_SDRAM_SendCommand(&hsdram1, &Command, HAL_MAX_DELAY);
 
-  // Step 3: Auto-Refresh (8 cycles)
-  Command.CommandMode = 0x1; // FMC_SDRAM_CMD_AUTOREFRESH_COMMAND
-  Command.AutoRefreshNumber = 8;
-  if (HAL_SDRAM_SendCommand(&hsdram1, &Command, 0xFFFF) != HAL_OK) {
-      Error_Handler();
-  }
+  /* Step 2: Insert delay (at least 100 us) */
+  HAL_Delay(1);  // 1ms is safe
 
-  // Step 4: Load Mode Register (CL=2, BL=1 since ReadBurst=DISABLE)
-  Command.CommandMode = FMC_SDRAM_CMD_LOAD_MODE; // 0x4
-  Command.ModeRegisterDefinition = (2 << 4) | (0 << 0); // CL=2, BL=1
-  if (HAL_SDRAM_SendCommand(&hsdram1, &Command, 0xFFFF) != HAL_OK) {
-      Error_Handler();
-  }
+  /* Step 3: Precharge all command */
+  Command.CommandMode            = FMC_SDRAM_CMD_PALL;
+  Command.CommandTarget          = FMC_SDRAM_CMD_TARGET_BANK1;
+  Command.AutoRefreshNumber      = 1;
+  Command.ModeRegisterDefinition = 0;
+  SDRANstatys = HAL_SDRAM_SendCommand(&hsdram1, &Command, HAL_MAX_DELAY);
 
-  // Step 5: Set refresh rate (64 ms / 4096 rows, SDCLK=160 MHz)
-  if (HAL_SDRAM_ProgramRefreshRate(&hsdram1, 2496) != HAL_OK) { // (64 ms / 4096) ÷ 6.25 ns ≈ 2496
-      Error_Handler();
-  }
+  /* Step 4: Auto-refresh command */
+  Command.CommandMode            = FMC_SDRAM_CMD_AUTOREFRESH_MODE;
+  Command.CommandTarget          = FMC_SDRAM_CMD_TARGET_BANK1;
+  Command.AutoRefreshNumber      = 8;  // Typical JEDEC requirement
+  Command.ModeRegisterDefinition = 0;
+  SDRANstatys = HAL_SDRAM_SendCommand(&hsdram1, &Command, HAL_MAX_DELAY);
 
+  /* Step 5: Load Mode Register */
+  // Mode Register configuration:
+  // Burst Length = 1 (0)
+  // Burst Type = Sequential (0 << 3)
+  // CAS Latency = 2 (2 << 4)
+  // Operating Mode = Standard (0 << 7)
+  // Write Burst Mode = Single (0 << 9)
+  uint32_t mode_reg = (0x0) | (0x0 << 3) | (0x2 << 4) | (0x0 << 7) | (0x0 << 9);
+
+  Command.CommandMode            = FMC_SDRAM_CMD_LOAD_MODE;
+  Command.CommandTarget          = FMC_SDRAM_CMD_TARGET_BANK1;
+  Command.AutoRefreshNumber      = 1;
+  Command.ModeRegisterDefinition = mode_reg;
+  SDRANstatys = HAL_SDRAM_SendCommand(&hsdram1, &Command, HAL_MAX_DELAY);
+
+  /* Step 6: Set the refresh rate counter */
+  // Refresh rate = (SDRAM refresh period / number of rows) * SDRAM clock frequency - 20
+  // Example: 64ms / 8192 rows * 100MHz - 20 ≈ 1292
+  SDRANstatys = HAL_SDRAM_ProgramRefreshRate(&hsdram1, 1292);
 
   /* USER CODE END FMC_Init 2 */
 }
@@ -306,7 +342,28 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void MPU_Config(void)
+{
+	MPU_Region_InitTypeDef MPU_InitStruct;
 
+	HAL_MPU_Disable(); // Disable first MPU
+
+	MPU_InitStruct.Enable           = MPU_REGION_ENABLE;
+	MPU_InitStruct.BaseAddress      = SDRAM_BANK_ADDR;
+	MPU_InitStruct.Size             = MPU_REGION_SIZE_32MB;
+	MPU_InitStruct.AccessPermission = MPU_REGION_FULL_ACCESS;
+	MPU_InitStruct.IsBufferable     = MPU_ACCESS_NOT_BUFFERABLE;
+	MPU_InitStruct.IsCacheable      = MPU_ACCESS_CACHEABLE;
+	MPU_InitStruct.IsShareable      = MPU_ACCESS_NOT_SHAREABLE;
+	MPU_InitStruct.Number           = MPU_REGION_NUMBER2;
+	MPU_InitStruct.TypeExtField     = MPU_TEX_LEVEL0;
+	MPU_InitStruct.SubRegionDisable = 0x00;
+	MPU_InitStruct.DisableExec      = MPU_INSTRUCTION_ACCESS_ENABLE;
+
+	HAL_MPU_ConfigRegion(&MPU_InitStruct);
+
+	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT); // Enable MPU
+}
 /* USER CODE END 4 */
 
 /**
