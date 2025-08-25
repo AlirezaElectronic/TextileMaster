@@ -61,6 +61,8 @@ FMC_SDRAM_CommandTypeDef command; //Control command
 
 /* Private variables ---------------------------------------------------------*/
 
+LTDC_HandleTypeDef hltdc;
+
 SDRAM_HandleTypeDef hsdram1;
 
 /* USER CODE BEGIN PV */
@@ -72,6 +74,7 @@ void SystemClock_Config(void);
 void PeriphCommonClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_FMC_Init(void);
+static void MX_LTDC_Init(void);
 /* USER CODE BEGIN PFP */
 void MPU_Config(void);
 /* USER CODE END PFP */
@@ -171,13 +174,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_FMC_Init();
-  HAL_SDRAM_MspInit(&hsdram1);
+  MX_LTDC_Init();
   /* USER CODE BEGIN 2 */
 
-  uint32_t ModeStatus = HAL_SDRAM_GetModeStatus(&hsdram1);
-
-  uint32_t Sdramstate = HAL_SDRAM_GetState(&hsdram1);
-
+  HAL_SDRAM_MspInit(&hsdram1);
 
 uint16_t write_pattern = 0xA5A5; // Test patterns
       uint16_t read_data;
@@ -298,11 +298,132 @@ void PeriphCommonClock_Config(void)
   }
 }
 
+/**
+  * @brief LTDC Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_LTDC_Init(void)
+{
+
+  /* USER CODE BEGIN LTDC_Init 0 */
+
+  /* USER CODE END LTDC_Init 0 */
+
+  LTDC_LayerCfgTypeDef pLayerCfg = {0};
+  LTDC_LayerCfgTypeDef pLayerCfg1 = {0};
+
+  /* USER CODE BEGIN LTDC_Init 1 */
+
+  /* USER CODE END LTDC_Init 1 */
+  hltdc.Instance = LTDC;
+  hltdc.Init.HSPolarity = LTDC_HSPOLARITY_AL;
+  hltdc.Init.VSPolarity = LTDC_VSPOLARITY_AL;
+  hltdc.Init.DEPolarity = LTDC_DEPOLARITY_AL;
+  hltdc.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
+  hltdc.Init.HorizontalSync = 7;
+  hltdc.Init.VerticalSync = 3;
+  hltdc.Init.AccumulatedHBP = 14;
+  hltdc.Init.AccumulatedVBP = 5;
+  hltdc.Init.AccumulatedActiveW = 654;
+  hltdc.Init.AccumulatedActiveH = 485;
+  hltdc.Init.TotalWidth = 660;
+  hltdc.Init.TotalHeigh = 487;
+  hltdc.Init.Backcolor.Blue = 0;
+  hltdc.Init.Backcolor.Green = 0;
+  hltdc.Init.Backcolor.Red = 0;
+  if (HAL_LTDC_Init(&hltdc) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  pLayerCfg.WindowX0 = 0;
+  pLayerCfg.WindowX1 = 0;
+  pLayerCfg.WindowY0 = 0;
+  pLayerCfg.WindowY1 = 0;
+  pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_ARGB8888;
+  pLayerCfg.Alpha = 0;
+  pLayerCfg.Alpha0 = 0;
+  pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
+  pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
+  pLayerCfg.FBStartAdress = 0;
+  pLayerCfg.ImageWidth = 0;
+  pLayerCfg.ImageHeight = 0;
+  pLayerCfg.Backcolor.Blue = 0;
+  pLayerCfg.Backcolor.Green = 0;
+  pLayerCfg.Backcolor.Red = 0;
+  if (HAL_LTDC_ConfigLayer(&hltdc, &pLayerCfg, 0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  pLayerCfg1.WindowX0 = 0;
+  pLayerCfg1.WindowX1 = 0;
+  pLayerCfg1.WindowY0 = 0;
+  pLayerCfg1.WindowY1 = 0;
+  pLayerCfg1.PixelFormat = LTDC_PIXEL_FORMAT_ARGB8888;
+  pLayerCfg1.Alpha = 0;
+  pLayerCfg1.Alpha0 = 0;
+  pLayerCfg1.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
+  pLayerCfg1.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
+  pLayerCfg1.FBStartAdress = 0;
+  pLayerCfg1.ImageWidth = 0;
+  pLayerCfg1.ImageHeight = 0;
+  pLayerCfg1.Backcolor.Blue = 0;
+  pLayerCfg1.Backcolor.Green = 0;
+  pLayerCfg1.Backcolor.Red = 0;
+  if (HAL_LTDC_ConfigLayer(&hltdc, &pLayerCfg1, 1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN LTDC_Init 2 */
+
+  /* USER CODE END LTDC_Init 2 */
+
+}
+
 /* FMC initialization function */
 static void MX_FMC_Init(void)
 {
 
-	FMC_SDRAM_TimingTypeDef SdramTiming = {0};
+  /* USER CODE BEGIN FMC_Init 0 */
+
+  /* USER CODE END FMC_Init 0 */
+
+  FMC_SDRAM_TimingTypeDef SdramTiming = {0};
+
+  /* USER CODE BEGIN FMC_Init 1 */
+
+  /* USER CODE END FMC_Init 1 */
+
+  /** Perform the SDRAM1 memory initialization sequence
+  */
+  hsdram1.Instance = FMC_SDRAM_DEVICE;
+  /* hsdram1.Init */
+  hsdram1.Init.SDBank = FMC_SDRAM_BANK1;
+  hsdram1.Init.ColumnBitsNumber = FMC_SDRAM_COLUMN_BITS_NUM_9;
+  hsdram1.Init.RowBitsNumber = FMC_SDRAM_ROW_BITS_NUM_13;
+  hsdram1.Init.MemoryDataWidth = FMC_SDRAM_MEM_BUS_WIDTH_16;
+  hsdram1.Init.InternalBankNumber = FMC_SDRAM_INTERN_BANKS_NUM_4;
+  hsdram1.Init.CASLatency = FMC_SDRAM_CAS_LATENCY_3;
+  hsdram1.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE;
+  hsdram1.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
+  hsdram1.Init.ReadBurst = FMC_SDRAM_RBURST_DISABLE;
+  hsdram1.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_1;
+  /* SdramTiming */
+  SdramTiming.LoadToActiveDelay = 2;
+  SdramTiming.ExitSelfRefreshDelay = 7;
+  SdramTiming.SelfRefreshTime = 4;
+  SdramTiming.RowCycleDelay = 7;
+  SdramTiming.WriteRecoveryTime = 3;
+  SdramTiming.RPDelay = 2;
+  SdramTiming.RCDDelay = 2;
+
+  if (HAL_SDRAM_Init(&hsdram1, &SdramTiming) != HAL_OK)
+  {
+    Error_Handler( );
+  }
+
+  /* USER CODE BEGIN FMC_Init 2 */
+//	FMC_SDRAM_TimingTypeDef SdramTiming = {0};
 
 	hsdram1.Instance = FMC_SDRAM_DEVICE;
 	/* hsdram1.Init */
@@ -329,6 +450,7 @@ static void MX_FMC_Init(void)
 	HAL_SDRAM_Init(&hsdram1, &SdramTiming); // Initialize the FMC interface
 
 	SDRAM_Initialization_Sequence(&hsdram1,&command);//ÅäÖÃSDRAM
+  /* USER CODE END FMC_Init 2 */
 }
 
 /**
@@ -343,6 +465,7 @@ static void MX_GPIO_Init(void)
   /* USER CODE END MX_GPIO_Init_1 */
 
   /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOI_CLK_ENABLE();
   __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
