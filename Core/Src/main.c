@@ -177,35 +177,31 @@ int main(void)
   MX_LTDC_Init();
   /* USER CODE BEGIN 2 */
 
-  HAL_SDRAM_MspInit(&hsdram1);
+
 
 uint16_t write_pattern = 0xA5A5; // Test patterns
       uint16_t read_data;
       uint32_t i;
       uint8_t errors = 0;
 
-      // Write pattern to SDRAM
-      for (i = 0; i < TEST_SIZE; i++) {
-          *(__IO uint32_t*)(SDRAM_BANK_ADDR + 4*i) = (uint32_t)0x00;
-      }
+//      // Write pattern to SDRAM
+//      for (i = 0; i < TEST_SIZE; i++) {
+//          *(__IO uint32_t*)(SDRAM_BANK_ADDR + 4*i) = (uint32_t)0x00;
+//      }
+//
+//      for (i = 0; i < TEST_SIZE; i++) {
+//          *(__IO uint32_t*)(SDRAM_BANK_ADDR + 4*i) = (uint32_t)0x19;
+//      }
+//
+//      // Read back and verify
+//      for (i = 0; i < TEST_SIZE; i++) {
+//          read_data = *(__IO uint16_t*)(SDRAM_BANK_ADDR + (i * 2));
+//          if (read_data != write_pattern) {
+//              errors++; // Track errors
+//          }
+//      }
 
-      for (i = 0; i < TEST_SIZE; i++) {
-          *(__IO uint32_t*)(SDRAM_BANK_ADDR + 4*i) = (uint32_t)0x19;
-      }
 
-      // Read back and verify
-      for (i = 0; i < TEST_SIZE; i++) {
-          read_data = *(__IO uint16_t*)(SDRAM_BANK_ADDR + (i * 2));
-          if (read_data != write_pattern) {
-              errors++; // Track errors
-          }
-      }
-
-
-      // Breakpoint here to check 'errors' in debugger
-      while (errors > 0) {
-          // Non-zero errors indicate failure
-      }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -311,7 +307,6 @@ static void MX_LTDC_Init(void)
   /* USER CODE END LTDC_Init 0 */
 
   LTDC_LayerCfgTypeDef pLayerCfg = {0};
-  LTDC_LayerCfgTypeDef pLayerCfg1 = {0};
 
   /* USER CODE BEGIN LTDC_Init 1 */
 
@@ -321,56 +316,37 @@ static void MX_LTDC_Init(void)
   hltdc.Init.VSPolarity = LTDC_VSPOLARITY_AL;
   hltdc.Init.DEPolarity = LTDC_DEPOLARITY_AL;
   hltdc.Init.PCPolarity = LTDC_PCPOLARITY_IPC;
-  hltdc.Init.HorizontalSync = 7;
-  hltdc.Init.VerticalSync = 3;
-  hltdc.Init.AccumulatedHBP = 14;
-  hltdc.Init.AccumulatedVBP = 5;
-  hltdc.Init.AccumulatedActiveW = 654;
-  hltdc.Init.AccumulatedActiveH = 485;
-  hltdc.Init.TotalWidth = 660;
-  hltdc.Init.TotalHeigh = 487;
-  hltdc.Init.Backcolor.Blue = 0;
-  hltdc.Init.Backcolor.Green = 0;
-  hltdc.Init.Backcolor.Red = 0;
+  hltdc.Init.HorizontalSync = 0;
+  hltdc.Init.VerticalSync = 0;
+  hltdc.Init.AccumulatedHBP = 43;
+  hltdc.Init.AccumulatedVBP = 12;
+  hltdc.Init.AccumulatedActiveW = 523;
+  hltdc.Init.AccumulatedActiveH = 284;
+  hltdc.Init.TotalWidth = 531;
+  hltdc.Init.TotalHeigh = 292;
+  hltdc.Init.Backcolor.Blue = 100;
+  hltdc.Init.Backcolor.Green = 100;
+  hltdc.Init.Backcolor.Red = 100;
   if (HAL_LTDC_Init(&hltdc) != HAL_OK)
   {
     Error_Handler();
   }
   pLayerCfg.WindowX0 = 0;
-  pLayerCfg.WindowX1 = 0;
+  pLayerCfg.WindowX1 = 480;
   pLayerCfg.WindowY0 = 0;
-  pLayerCfg.WindowY1 = 0;
-  pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_ARGB8888;
-  pLayerCfg.Alpha = 0;
+  pLayerCfg.WindowY1 = 272;
+  pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
+  pLayerCfg.Alpha = 255;
   pLayerCfg.Alpha0 = 0;
   pLayerCfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
   pLayerCfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
-  pLayerCfg.FBStartAdress = 0;
-  pLayerCfg.ImageWidth = 0;
-  pLayerCfg.ImageHeight = 0;
+  pLayerCfg.FBStartAdress = 0xC0000000;
+  pLayerCfg.ImageWidth = 480;
+  pLayerCfg.ImageHeight = 272;
   pLayerCfg.Backcolor.Blue = 0;
   pLayerCfg.Backcolor.Green = 0;
   pLayerCfg.Backcolor.Red = 0;
   if (HAL_LTDC_ConfigLayer(&hltdc, &pLayerCfg, 0) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  pLayerCfg1.WindowX0 = 0;
-  pLayerCfg1.WindowX1 = 0;
-  pLayerCfg1.WindowY0 = 0;
-  pLayerCfg1.WindowY1 = 0;
-  pLayerCfg1.PixelFormat = LTDC_PIXEL_FORMAT_ARGB8888;
-  pLayerCfg1.Alpha = 0;
-  pLayerCfg1.Alpha0 = 0;
-  pLayerCfg1.BlendingFactor1 = LTDC_BLENDING_FACTOR1_CA;
-  pLayerCfg1.BlendingFactor2 = LTDC_BLENDING_FACTOR2_CA;
-  pLayerCfg1.FBStartAdress = 0;
-  pLayerCfg1.ImageWidth = 0;
-  pLayerCfg1.ImageHeight = 0;
-  pLayerCfg1.Backcolor.Blue = 0;
-  pLayerCfg1.Backcolor.Green = 0;
-  pLayerCfg1.Backcolor.Red = 0;
-  if (HAL_LTDC_ConfigLayer(&hltdc, &pLayerCfg1, 1) != HAL_OK)
   {
     Error_Handler();
   }
