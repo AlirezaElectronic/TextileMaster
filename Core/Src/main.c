@@ -175,14 +175,16 @@ int main(void)
   MX_GPIO_Init();
   MX_FMC_Init();
   MX_LTDC_Init();
+
+  HAL_GPIO_WritePin(LCD_BL_GPIO_Port, LCD_BL_Pin, 1);
   /* USER CODE BEGIN 2 */
 
 
 
-uint16_t write_pattern = 0xA5A5; // Test patterns
-      uint16_t read_data;
-      uint32_t i;
-      uint8_t errors = 0;
+//	uint16_t write_pattern = 0xA5A5; // Test patterns
+//	uint16_t read_data;
+//	uint32_t i;
+//	uint8_t errors = 0;
 
 //      // Write pattern to SDRAM
 //      for (i = 0; i < TEST_SIZE; i++) {
@@ -436,6 +438,7 @@ static void MX_FMC_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
 
   /* USER CODE END MX_GPIO_Init_1 */
@@ -447,6 +450,17 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOG_CLK_ENABLE();
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(LCD_BL_GPIO_Port, LCD_BL_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin : LCD_BL_Pin */
+  GPIO_InitStruct.Pin = LCD_BL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(LCD_BL_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
