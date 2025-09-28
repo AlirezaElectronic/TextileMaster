@@ -56,7 +56,16 @@ FMC_SDRAM_CommandTypeDef command; //Control command
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
+#define LCD_WIDTH  480
+#define LCD_HEIGHT 272
+#define FRAMEBUFFER_ADDR 0xC0000000 // SDRAM base address
 
+
+#define COLOR_RED   0xF800
+#define COLOR_GREEN 0x07E0
+#define COLOR_BLUE  0x001F
+#define COLOR_BLACK 0x0000
+#define COLOR_WHITE 0xFFFF
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -77,6 +86,7 @@ static void MX_FMC_Init(void);
 static void MX_LTDC_Init(void);
 /* USER CODE BEGIN PFP */
 void MPU_Config(void);
+void FillFramebuffer(uint32_t framebuffer_addr, uint16_t color, uint16_t width, uint16_t height);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -175,11 +185,8 @@ int main(void)
   MX_GPIO_Init();
   MX_FMC_Init();
   MX_LTDC_Init();
-
-  HAL_GPIO_WritePin(LCD_BL_GPIO_Port, LCD_BL_Pin, 1);
   /* USER CODE BEGIN 2 */
-
-
+  HAL_GPIO_WritePin(LCD_BL_GPIO_Port, LCD_BL_Pin, 1);
 
 //	uint16_t write_pattern = 0xA5A5; // Test patterns
 //	uint16_t read_data;
@@ -203,13 +210,49 @@ int main(void)
 //          }
 //      }
 
+      LTDC_LayerCfgTypeDef layer_cfg = {0};
+      layer_cfg.WindowX0 = 0;
+      layer_cfg.WindowX1 = LCD_WIDTH;
+      layer_cfg.WindowY0 = 0;
+      layer_cfg.WindowY1 = LCD_HEIGHT;
+      layer_cfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB565;
+      layer_cfg.FBStartAdress = FRAMEBUFFER_ADDR; // SDRAM base
+      layer_cfg.Alpha = 255; // Opaque
+      layer_cfg.Alpha0 = 0;
+      layer_cfg.BlendingFactor1 = LTDC_BLENDING_FACTOR1_PAxCA;
+      layer_cfg.BlendingFactor2 = LTDC_BLENDING_FACTOR2_PAxCA;
+      layer_cfg.ImageWidth = LCD_WIDTH;
+      layer_cfg.ImageHeight = LCD_HEIGHT;
 
+      HAL_LTDC_ConfigLayer(&hltdc, &layer_cfg, 0); // Layer 0
+      HAL_LTDC_EnableColorKeying(&hltdc, 0); // Optional, disable color keying
+      HAL_LTDC_SetAddress(&hltdc, FRAMEBUFFER_ADDR, 0); // Set framebuffer address
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+		FillFramebuffer(FRAMEBUFFER_ADDR, COLOR_RED, LCD_WIDTH, LCD_HEIGHT);
+		HAL_Delay(500); // Wait 2 seconds
+
+		// Fill with green
+		FillFramebuffer(FRAMEBUFFER_ADDR, COLOR_GREEN, LCD_WIDTH, LCD_HEIGHT);
+		HAL_Delay(500);
+
+		// Fill with blue
+		FillFramebuffer(FRAMEBUFFER_ADDR, COLOR_BLUE, LCD_WIDTH, LCD_HEIGHT);
+		HAL_Delay(500);
+
+		// Fill with white
+		FillFramebuffer(FRAMEBUFFER_ADDR, COLOR_WHITE, LCD_WIDTH, LCD_HEIGHT);
+		HAL_Delay(500);
+
+		// Fill with black
+		FillFramebuffer(FRAMEBUFFER_ADDR, COLOR_BLACK, LCD_WIDTH, LCD_HEIGHT);
+		HAL_Delay(500);
+
 	  GeneralCounter ++ ;
     /* USER CODE END WHILE */
 
@@ -489,6 +532,16 @@ void MPU_Config(void)
 	HAL_MPU_ConfigRegion(&MPU_InitStruct);
 
 	HAL_MPU_Enable(MPU_PRIVILEGED_DEFAULT); // Enable MPU
+}
+
+
+void FillFramebuffer(uint32_t framebuffer_addr, uint16_t color, uint16_t width, uint16_t height) {
+    uint32_t num_pixels = width * height;
+    uint16_t *fb_ptr = (uint16_t *)framebuffer_addr;
+
+    for (uint32_t i = 0; i < num_pixels; i++) {
+        fb_ptr[i] = color;
+    }
 }
 /* USER CODE END 4 */
 
