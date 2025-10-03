@@ -16,3 +16,9 @@ void Screen1Presenter::deactivate()
 {
 
 }
+
+void Screen1Presenter::SetLight(bool State ){
+
+   view.SetLight(State);
+
+}

@@ -16,6 +16,7 @@ public:
     void tick();
 protected:
     ModelListener* modelListener;
+    bool ButtonState;
 };
 
 #endif // MODEL_HPP

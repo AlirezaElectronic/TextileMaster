@@ -14,3 +14,14 @@ void Screen1View::tearDownScreen()
 {
     Screen1ViewBase::tearDownScreen();
 }
+
+void Screen1View::SetLight(bool State){
+
+	static uint8_t LastState= 0 ;
+
+	if(LastState!=State){
+		LastState=State;
+		image1.setVisible(State);
+		image1.invalidate();
+	}
+}

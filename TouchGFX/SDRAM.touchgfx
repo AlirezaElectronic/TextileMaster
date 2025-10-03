@@ -32,12 +32,13 @@
             "Y": 36,
             "Width": 99,
             "Height": 200,
+            "LockPosition": true,
             "RelativeFilename": "off.png"
           },
           {
             "Type": "TextArea",
             "Name": "textArea1",
-            "X": 148,
+            "X": 161,
             "Y": 12,
             "Width": 185,
             "Height": 24,

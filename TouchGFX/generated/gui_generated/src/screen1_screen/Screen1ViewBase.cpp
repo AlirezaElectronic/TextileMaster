@@ -25,7 +25,7 @@ Screen1ViewBase::Screen1ViewBase()
     image2.setBitmap(touchgfx::Bitmap(BITMAP_OFF_ID));
     add(image2);
 
-    textArea1.setXY(148, 12);
+    textArea1.setXY(161, 12);
     textArea1.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     textArea1.setLinespacing(0);
     Unicode::snprintf(textArea1Buffer, TEXTAREA1_SIZE, "%s", touchgfx::TypedText(T___SINGLEUSE_LZQ6).getText());

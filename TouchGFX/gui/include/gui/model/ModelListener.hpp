@@ -14,6 +14,9 @@ public:
     {
         model = m;
     }
+
+   virtual void SetLight(bool State ){};
+
 protected:
     Model* model;
 };

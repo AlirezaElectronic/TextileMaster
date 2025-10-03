@@ -27,6 +27,8 @@ public:
 
     virtual ~Screen1Presenter() {}
 
+    virtual void SetLight(bool State );
+
 private:
     Screen1Presenter();
 
