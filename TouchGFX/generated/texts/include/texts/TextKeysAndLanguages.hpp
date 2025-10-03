@@ -12,6 +12,8 @@ enum LANGUAGES
 
 enum TEXTS
 {
+    T___SINGLEUSE_LZQ6,
+    T___SINGLEUSE_MPE4,
     NUMBER_OF_TEXT_KEYS
 };
 

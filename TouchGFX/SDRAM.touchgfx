@@ -2,8 +2,7 @@
   "Application": {
     "Screens": [
       {
-        "Name": "screen",
-        "CanvasBufferSize": 7200,
+        "Name": "Screen1",
         "Components": [
           {
             "Type": "Box",
@@ -11,41 +10,53 @@
             "Width": 480,
             "Height": 272,
             "Color": {
-              "Red": 79,
-              "Green": 73,
-              "Blue": 73
+              "Red": 255,
+              "Green": 255,
+              "Blue": 255
             }
           },
           {
-            "Type": "DynamicGraph",
-            "Name": "dynamicGraph1",
-            "X": 58,
-            "Y": 10,
-            "Width": 380,
-            "Height": 240,
-            "DataSeed": -120772554,
-            "NumberOfValues": 100,
-            "MaxY": 100.0,
-            "Precision": "1",
-            "LastIndex": 99,
-            "XAxisScale": 1.0,
-            "InsertRandomValues": true,
-            "GraphType": "GraphWrapClear",
-            "GraphDrawers": [
-              {
-                "Type": "LineDrawer",
-                "LineWidth": 2,
-                "FileNameImage": "",
-                "Color": {
-                  "Red": 20,
-                  "Green": 151,
-                  "Blue": 197
-                }
-              }
-            ]
+            "Type": "Image",
+            "Name": "image1",
+            "X": 191,
+            "Y": 36,
+            "Width": 99,
+            "Height": 200,
+            "Visible": false,
+            "RelativeFilename": "on.png"
+          },
+          {
+            "Type": "Image",
+            "Name": "image2",
+            "X": 191,
+            "Y": 36,
+            "Width": 99,
+            "Height": 200,
+            "RelativeFilename": "off.png"
+          },
+          {
+            "Type": "TextArea",
+            "Name": "textArea1",
+            "X": 148,
+            "Y": 12,
+            "Width": 185,
+            "Height": 24,
+            "TextId": "__SingleUse_MPE4",
+            "TextRotation": "0",
+            "AutoSize": true,
+            "Wildcard1": {
+              "TextId": "__SingleUse_LZQ6",
+              "UseBuffer": true,
+              "BufferSize": 4
+            }
           }
         ],
-        "Interactions": []
+        "Interactions": [],
+        "CustomActions": [
+          {
+            "Name": "action1"
+          }
+        ]
       }
     ],
     "CustomContainerDefinitions": [],
@@ -55,7 +66,7 @@
       "Height": 272
     },
     "SelectedColorDepth": 16,
-    "StartupScreenName": "screen",
+    "StartupScreenName": "Screen1",
     "SelectedStartupLanguage": "GB",
     "TouchGfxPath": "../Middlewares/ST/touchgfx",
     "UIPath": ".",

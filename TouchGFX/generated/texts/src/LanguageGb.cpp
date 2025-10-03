@@ -10,5 +10,6 @@ KEEP extern const uint32_t indicesGb[] TEXT_LOCATION_FLASH_ATTRIBUTE;
 // Remap all strings
 TEXT_LOCATION_FLASH_PRAGMA
 KEEP extern const uint32_t indicesGb[] TEXT_LOCATION_FLASH_ATTRIBUTE = {
-    0
+    16, // T___SINGLEUSE_LZQ6: "0000"
+    0   // T___SINGLEUSE_MPE4: "Light State : <>"
 };
