@@ -21,7 +21,6 @@ void Screen1View::SetLight(bool State){
 
 	if(LastState!=State){
 		LastState=State;
-		image1.setVisible(State);
-		image1.invalidate();
+
 	}
 }

@@ -728,10 +728,12 @@ void FillFramebuffer(uint32_t framebuffer_addr, uint16_t color, uint16_t width, 
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN 5 */
-	MX_TouchGFX_Process();
+  MX_TouchGFX_Process();
+
   /* Infinite loop */
   for(;;)
   {
+
     osDelay(10);
   }
   /* USER CODE END 5 */

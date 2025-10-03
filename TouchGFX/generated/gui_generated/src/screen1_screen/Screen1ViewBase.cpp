@@ -3,7 +3,6 @@
 /*********************************************************************************/
 #include <gui_generated/screen1_screen/Screen1ViewBase.hpp>
 #include <touchgfx/Color.hpp>
-#include <images/BitmapDatabase.hpp>
 #include <texts/TextKeysAndLanguages.hpp>
 
 Screen1ViewBase::Screen1ViewBase()
@@ -16,22 +15,10 @@ Screen1ViewBase::Screen1ViewBase()
     box1.setColor(touchgfx::Color::getColorFromRGB(255, 255, 255));
     add(box1);
 
-    image1.setXY(191, 36);
-    image1.setBitmap(touchgfx::Bitmap(BITMAP_ON_ID));
-    image1.setVisible(false);
-    add(image1);
-
-    image2.setXY(191, 36);
-    image2.setBitmap(touchgfx::Bitmap(BITMAP_OFF_ID));
-    add(image2);
-
-    textArea1.setXY(161, 12);
+    textArea1.setXY(165, 235);
     textArea1.setColor(touchgfx::Color::getColorFromRGB(0, 0, 0));
     textArea1.setLinespacing(0);
-    Unicode::snprintf(textArea1Buffer, TEXTAREA1_SIZE, "%s", touchgfx::TypedText(T___SINGLEUSE_LZQ6).getText());
-    textArea1.setWildcard(textArea1Buffer);
-    textArea1.resizeToCurrentText();
-    textArea1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_MPE4));
+    textArea1.setTypedText(touchgfx::TypedText(T___SINGLEUSE_STEJ));
     add(textArea1);
 }
 

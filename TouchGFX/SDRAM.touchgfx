@@ -16,40 +16,15 @@
             }
           },
           {
-            "Type": "Image",
-            "Name": "image1",
-            "X": 191,
-            "Y": 36,
-            "Width": 99,
-            "Height": 200,
-            "Visible": false,
-            "RelativeFilename": "on.png"
-          },
-          {
-            "Type": "Image",
-            "Name": "image2",
-            "X": 191,
-            "Y": 36,
-            "Width": 99,
-            "Height": 200,
-            "LockPosition": true,
-            "RelativeFilename": "off.png"
-          },
-          {
             "Type": "TextArea",
             "Name": "textArea1",
-            "X": 161,
-            "Y": 12,
-            "Width": 185,
+            "X": 165,
+            "Y": 235,
+            "Width": 151,
             "Height": 24,
-            "TextId": "__SingleUse_MPE4",
+            "TextId": "__SingleUse_STEJ",
             "TextRotation": "0",
-            "AutoSize": true,
-            "Wildcard1": {
-              "TextId": "__SingleUse_LZQ6",
-              "UseBuffer": true,
-              "BufferSize": 4
-            }
+            "AutoSize": true
           }
         ],
         "Interactions": [],
