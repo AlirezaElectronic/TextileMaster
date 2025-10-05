@@ -6,8 +6,10 @@
 #include <touchgfx/hal/Types.hpp>
 #include <touchgfx/Bitmap.hpp>
 
-const uint16_t BITMAP_OFF_ID = 0;
-const uint16_t BITMAP_ON_ID = 1;
+const uint16_t BITMAP_ALTERNATE_THEME_IMAGES_WIDGETS_TOGGLEBUTTON_MEDIUM_ROUNDED_OFF_LIGHT_ID = 0;
+const uint16_t BITMAP_ALTERNATE_THEME_IMAGES_WIDGETS_TOGGLEBUTTON_MEDIUM_ROUNDED_ON_NORMAL_ID = 1;
+const uint16_t BITMAP_OFF_ID = 2;
+const uint16_t BITMAP_ON_ID = 3;
 
 namespace BitmapDatabase
 {

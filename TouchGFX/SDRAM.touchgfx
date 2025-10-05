@@ -19,12 +19,23 @@
             "Type": "TextArea",
             "Name": "textArea1",
             "X": 165,
-            "Y": 235,
+            "Y": 176,
             "Width": 151,
             "Height": 24,
             "TextId": "__SingleUse_STEJ",
             "TextRotation": "0",
             "AutoSize": true
+          },
+          {
+            "Type": "ToggleButton",
+            "Name": "toggleButton1",
+            "X": 185,
+            "Y": 111,
+            "Width": 110,
+            "Height": 50,
+            "Pressed": "__generated\\alternate_theme_images_widgets_togglebutton_medium_rounded_on_normal.png",
+            "Released": "__generated\\alternate_theme_images_widgets_togglebutton_medium_rounded_off_light.png",
+            "Preset": "alternate_theme\\presets\\togglebutton\\medium\\rounded.json"
           }
         ],
         "Interactions": [],
